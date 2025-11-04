@@ -7,15 +7,11 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted  # Roda na própria VM!
-    
+    runs-on: self-hosted
+
     steps:
-    - name: Checkout do código
-      uses: actions/checkout@v3
-    
-    - name: Atualizar site
-      run: |
-        cd /var/www/html/testevarant/testevarant
-        sudo git pull origin main
-        sudo systemctl restart nginx
-        echo "Deploy realizado com sucesso em $(date)"
+      - name: Atualizar site
+        run: |
+          cd /var/www/html/testevarant
+          sudo git pull
+          sudo systemctl restart nginx
