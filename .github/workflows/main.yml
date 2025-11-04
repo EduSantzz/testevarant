@@ -10,8 +10,14 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Criar diretório do site
+        run: sudo mkdir -p /var/www/html/restaurant
+
       - name: Atualizar site
         run: |
-          cd /var/www/html/testevarant
+          # 1. Muda para o diretório de destino (agora ele existe!)
+          cd /var/www/html/restaurant
+          # 2. Clona/Atualiza o código
           sudo git pull
+          # 3. Reinicia o Nginx para aplicar as mudanças
           sudo systemctl restart nginx
