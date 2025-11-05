@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Criar diretório do site
         run: sudo mkdir -p /var/www/html/restaurant
+        shell: bash
 
       - name: Atualizar site
         run: |
