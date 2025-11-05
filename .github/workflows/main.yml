@@ -6,22 +6,23 @@ on:
       - main
 
 jobs:
-  deploy:
-    runs-on: self-hosted
+    deploy:
+        runs-on: self-hosted
 
-    steps:
-      - name: Checkout do Código
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout do Código
+              uses: actions/checkout@v4
 
-      - name: Deploy e Permissões
-        run: |
-          # Tentativa: usar 'sudo' novamente, mas com PATH forçado
-          env PATH=/usr/bin:/bin:$PATH sudo mkdir -p /var/www/html/restaurant
-          env PATH=/usr/bin:/bin:$PATH sudo rm -rf /var/www/html/restaurant/*
-          env PATH=/usr/bin:/bin:$PATH sudo cp -R $GITHUB_WORKSPACE/* /var/www/html/restaurant/
-          env PATH=/usr/bin:/bin:$PATH sudo chown -R www-data:www-data /var/www/html/restaurant
-        shell: bash
+            - name: Deploy e Permissões
+              run: |
+                  # Tenta executar o 'su -c' no PATH do runner (pode ser /bin/su)
+                  # A string inteira após 'su -c' é executada como root
+                  su -c "mkdir -p /var/www/html/restaurant && \
+                          rm -rf /var/www/html/restaurant/* && \
+                          cp -R $GITHUB_WORKSPACE/* /var/www/html/restaurant/ && \
+                          chown -R www-data:www-data /var/www/html/restaurant"
+              shell: bash
 
-      - name: Reiniciar Nginx
-        run: env PATH=/usr/bin:/bin:$PATH sudo systemctl restart nginx
-        shell: bash
+            - name: Reiniciar Nginx
+              run: env PATH=/usr/bin:/bin:$PATH sudo systemctl restart nginx
+              shell: bash
