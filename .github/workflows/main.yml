@@ -13,16 +13,24 @@ jobs:
       - name: Checkout do Código
         uses: actions/checkout@v4
 
+      - name: Diagnóstico de Caminho
+        run: |
+          # 1. Lista o conteúdo do /var (para ver se /var/www existe)
+          echo "Conteúdo de /var:"
+          /usr/bin/sudo ls -la /var/
+          # 2. Tenta criar o /var/www/html/ (o -p deve criar o /var/www se ele não existir)
+          echo "Tentando criar /var/www/html/..."
+          /usr/bin/sudo mkdir -p /var/www/html/
+        shell: bash
+
       - name: Deploy e Permissões
         run: |
-          # Cria o diretório (este passo deve funcionar agora)
-          sudo mkdir -p /var/www/html/restaurant
-          # Remove arquivos antigos do destino (opcional, mas limpa)
-          sudo rm -rf /var/www/html/restaurant/*
-          # Copia todos os arquivos clonados do repositório (. por padrão) para o destino
-          sudo cp -R . /var/www/html/restaurant/
-          # Ajusta as permissões (importante para o Nginx/Web)
-          sudo chown -R www-data:www-data /var/www/html/restaurant
-
+          # O erro não deve ocorrer mais se o Diagnóstico funcionar
+          /usr/bin/sudo mkdir -p /var/www/html/restaurant
+          /usr/bin/sudo rm -rf /var/www/html/restaurant/*
+          /usr/bin/sudo cp -R . /var/www/html/restaurant/
+          /usr/bin/sudo chown -R www-data:www-data /var/www/html/restaurant
+        shell: bash 
+        
       - name: Reiniciar Nginx
-        run: sudo systemctl restart nginx
+        run: /usr/bin/sudo systemctl restart nginx
