@@ -15,14 +15,13 @@ jobs:
 
       - name: Deploy e Permissões
         run: |
-          # Executa todos os comandos como root, ignorando a falha do PATH do sudo
-          # O su -c executa o comando e sai.
-          /usr/bin/su -c "mkdir -p /var/www/html/restaurant"
-          /usr/bin/su -c "rm -rf /var/www/html/restaurant/*"
-          /usr/bin/su -c "cp -R $GITHUB_WORKSPACE/* /var/www/html/restaurant/"
-          /usr/bin/su -c "chown -R www-data:www-data /var/www/html/restaurant"
+          # Tentativa: usar 'sudo' novamente, mas com PATH forçado
+          env PATH=/usr/bin:/bin:$PATH sudo mkdir -p /var/www/html/restaurant
+          env PATH=/usr/bin:/bin:$PATH sudo rm -rf /var/www/html/restaurant/*
+          env PATH=/usr/bin:/bin:$PATH sudo cp -R $GITHUB_WORKSPACE/* /var/www/html/restaurant/
+          env PATH=/usr/bin:/bin:$PATH sudo chown -R www-data:www-data /var/www/html/restaurant
         shell: bash
 
       - name: Reiniciar Nginx
-        run: /usr/bin/su -c "systemctl restart nginx"
+        run: env PATH=/usr/bin:/bin:$PATH sudo systemctl restart nginx
         shell: bash
