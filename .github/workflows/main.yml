@@ -10,15 +10,19 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Criar diretório do site
-        run: sudo mkdir -p /var/www/html/restaurant
-        shell: bash
+      - name: Checkout do Código
+        uses: actions/checkout@v4
 
-      - name: Atualizar site
+      - name: Deploy e Permissões
         run: |
-          # 1. Muda para o diretório de destino (agora ele existe!)
-          cd /var/www/html/restaurant
-          # 2. Clona/Atualiza o código
-          sudo git pull
-          # 3. Reinicia o Nginx para aplicar as mudanças
-          sudo systemctl restart nginx
+          # Cria o diretório (este passo deve funcionar agora)
+          sudo mkdir -p /var/www/html/restaurant
+          # Remove arquivos antigos do destino (opcional, mas limpa)
+          sudo rm -rf /var/www/html/restaurant/*
+          # Copia todos os arquivos clonados do repositório (. por padrão) para o destino
+          sudo cp -R . /var/www/html/restaurant/
+          # Ajusta as permissões (importante para o Nginx/Web)
+          sudo chown -R www-data:www-data /var/www/html/restaurant
+
+      - name: Reiniciar Nginx
+        run: sudo systemctl restart nginx
